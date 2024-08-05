@@ -242,3 +242,44 @@ describe('add option groups programmatically', () => {
     expect(document.querySelector('#test-select').val()).toStrictEqual(['option2', 'option4'])
   })
 })
+
+describe('multi-select option selection toggle', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <select id="test-select" multiple>
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+      </select>
+    `
+    createSelectra('#test-select')
+  })
+
+  test('click on option to toggle selection', () => {
+    document.querySelector('#test-select').dispatchEvent(new Event('mousedown'))
+    document.querySelector('.selectra-option[data-value="option2"]').dispatchEvent(new Event('mouseup'))
+    expect(Array.from(document.querySelector('#test-select').selectedOptions).map(option => option.value)).toContain('option2')
+
+    document.querySelector('.selectra-option[data-value="option2"]').dispatchEvent(new Event('mouseup'))
+    expect(Array.from(document.querySelector('#test-select').selectedOptions).map(option => option.value)).not.toContain('option2')
+  })
+
+  test('select multiple options and then deselect one', () => {
+    document.querySelector('#test-select').dispatchEvent(new Event('mousedown'))
+    document.querySelector('.selectra-option[data-value="option1"]').dispatchEvent(new Event('mouseup'))
+    document.querySelector('.selectra-option[data-value="option2"]').dispatchEvent(new Event('mouseup'))
+    expect(Array.from(document.querySelector('#test-select').selectedOptions).map(option => option.value)).toStrictEqual(['option1', 'option2'])
+
+    document.querySelector('.selectra-option[data-value="option1"]').dispatchEvent(new Event('mouseup'))
+    expect(Array.from(document.querySelector('#test-select').selectedOptions).map(option => option.value)).toStrictEqual(['option2'])
+  })
+
+  test('no option selected after deselecting all', () => {
+    document.querySelector('#test-select').dispatchEvent(new Event('mousedown'))
+    document.querySelector('.selectra-option[data-value="option1"]').dispatchEvent(new Event('mouseup'))
+    document.querySelector('.selectra-option[data-value="option2"]').dispatchEvent(new Event('mouseup'))
+    document.querySelector('.selectra-option[data-value="option1"]').dispatchEvent(new Event('mouseup'))
+    document.querySelector('.selectra-option[data-value="option2"]').dispatchEvent(new Event('mouseup'))
+    expect(Array.from(document.querySelector('#test-select').selectedOptions).map(option => option.value)).toStrictEqual([])
+  })
+})

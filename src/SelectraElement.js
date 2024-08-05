@@ -309,7 +309,10 @@ class SelectraElement {
       // Remove selected from all of the items
       Array.from(this.element.options).forEach((option) => {
         option.selected = false
-        this.optionsElement.querySelector('.selectra-option[data-value="' + value + '"]').dataset.selected = false
+        const optionElement = this.optionsElement.querySelector('.selectra-option[data-value="' + option.value + '"]')
+        if (optionElement) {
+          optionElement.dataset.selected = false
+        }
       })
 
       // Find value in currentValue
@@ -323,8 +326,14 @@ class SelectraElement {
 
       // Add selected for remaining items
       for (const value of currentValue) {
-        this.element.querySelector('option[value="' + value + '"]').selected = true
-        this.optionsElement.querySelector('.selectra-option[data-value="' + value + '"]').dataset.selected = true
+        const optionElement = this.element.querySelector('option[value="' + value + '"]')
+        if (optionElement) {
+          optionElement.selected = true
+        }
+        const selectraOptionElement = this.optionsElement.querySelector('.selectra-option[data-value="' + value + '"]')
+        if (selectraOptionElement) {
+          selectraOptionElement.dataset.selected = true
+        }
       }
     } else {
       // Check if option is disabled yes or no
